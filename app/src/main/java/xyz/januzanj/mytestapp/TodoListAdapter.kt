@@ -1,6 +1,7 @@
 package xyz.januzanj.mytestapp
 
 import android.text.SpannableString
+import android.text.TextUtils
 import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
@@ -17,26 +18,18 @@ class TodoListAdapter(
     val viewModel: TodoListViewModel
 ) : RecyclerView.Adapter<TodoListAdapter.TodosViewHolder>() {
 
+    private lateinit var onItemClickCallback: OnItemClickCallback
+
     inner class TodosViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvTitle: TextView = itemView.findViewById(R.id.tvTitle)
         private val checkBox: ImageView = itemView.findViewById(R.id.checkBox)
 
         init {
             checkBox.setOnClickListener {
-//                theTodoList?.get(adapterPosition)?.wasChecked = true
                 theTodoList?.get(adapterPosition)?.completed =
                     !theTodoList?.get(adapterPosition)?.completed!!
                 notifyItemChanged(adapterPosition)
                 viewModel.loadTodos(theTodoList!!)
-            }
-
-            tvTitle.setOnClickListener {
-
-                if (android.os.Build.VERSION.SDK_INT >= 29) {
-                    tvTitle.isSingleLine = !tvTitle.isSingleLine
-                } else {
-                    // do something for phones running an SDK before lollipop
-                }
             }
         }
 
@@ -53,13 +46,6 @@ class TodoListAdapter(
                 tvTitle.alpha = 1f
             } else {
                 checkBox.setImageResource(android.R.drawable.checkbox_off_background)
-//                if (data.wasChecked) {
-//                    val content = SpannableString(data.title)
-//                    content.setSpan(UnderlineSpan(), 0, content.length, 0)
-//                    tvTitle.setText(content)
-//                    tvTitle.alpha = 0.5f
-//                }
-
                 itemView.setBackgroundColor(
                     ContextCompat.getColor(
                         itemView.context,
@@ -77,6 +63,9 @@ class TodoListAdapter(
 
     override fun onBindViewHolder(holder: TodosViewHolder, position: Int) {
         holder.bind(theTodoList!![position])
+        holder.itemView.setOnClickListener{
+            onItemClickCallback.onItemClicked(theTodoList!![position])
+        }
     }
 
     override fun getItemCount(): Int {
@@ -87,5 +76,13 @@ class TodoListAdapter(
         theTodoList!!.removeAt(adapterPosition)
         notifyItemRemoved(adapterPosition)
         viewModel.loadTodos(theTodoList!!)
+    }
+
+    interface OnItemClickCallback {
+        fun onItemClicked(data: TodoResponse)
+    }
+
+    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback){
+        this.onItemClickCallback = onItemClickCallback
     }
 }

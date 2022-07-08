@@ -16,14 +16,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="start"
-            android:ellipsize="marquee"
             android:text="Row name Row name Row name Row name Row name Row name "
             android:textColor="@color/black"
-            android:maxLines="2"
+            android:layout_marginEnd="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/checkBox"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:singleLine="true" />
 
 
         <ImageView
@@ -33,6 +33,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="16dp"
             app:srcCompat="@android:drawable/checkbox_off_background" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

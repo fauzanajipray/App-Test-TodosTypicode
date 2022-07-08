@@ -24,16 +24,25 @@ class TodoListViewModel (private val mainRepository: MainRepository) : ViewModel
         }
     }
 
+    fun getTodoById(todo_id : Int) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = mainRepository.getTodo(todo_id)))
+        }catch (e: Exception){
+            emit(Resource.error(data = null,message = e.message ?: "Error ocurred"))
+        }
+    }
+
     fun loadTodos(data:MutableList<TodoResponse>) {
         todoList.value=data
     }
 
-    fun updateVal(position: Int) {
-        todoList.value!!.get(position).completed = !todoList.value!!.get(position).completed
-    }
-
-    fun getValRow(position: Int): TodoResponse? {
-        return todoList.value?.get(position)
-    }
+//    fun updateVal(position: Int) {
+//        todoList.value!!.get(position).completed = !todoList.value!!.get(position).completed
+//    }
+//
+//    fun getValRow(position: Int): TodoResponse? {
+//        return todoList.value?.get(position)
+//    }
 
 }

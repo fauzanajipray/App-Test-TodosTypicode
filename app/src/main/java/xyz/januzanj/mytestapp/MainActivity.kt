@@ -1,7 +1,9 @@
 package xyz.januzanj.mytestapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
@@ -16,6 +18,7 @@ import xyz.januzanj.mytestapp.databinding.ActivityMainBinding
 import xyz.januzanj.mytestapp.utils.Status
 import xyz.januzanj.mytestapp.viewmodel.TodoListViewModel
 import xyz.januzanj.mytestapp.viewmodel.ViewModelFactory
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,7 +38,6 @@ class MainActivity : AppCompatActivity() {
                 TodoListViewModel::class.java
         )
         viewModel.getTodos().observe(this, Observer {
-
             it?.let {
                 when (it.status) {
                     Status.SUCCESS -> {
@@ -58,8 +60,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
         binding.rvMain.layoutManager = LinearLayoutManager(this)
-
-
         adapter = TodoListAdapter(null, viewModel)
         binding.rvMain.adapter = adapter
 
@@ -75,11 +75,18 @@ class MainActivity : AppCompatActivity() {
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                     adapter.delete(viewHolder.adapterPosition)
                 }
-
             }
         val itemTouchHelper = ItemTouchHelper(touchHelperCallback)
         itemTouchHelper.attachToRecyclerView(binding.rvMain)
 
+        adapter.setOnItemClickCallback(object : TodoListAdapter.OnItemClickCallback {
+            override fun onItemClicked(data: TodoResponse) {
+                val intent = Intent(this@MainActivity, DetailActivity::class.java)
+                intent.putExtra("data", data)
+                startActivity(intent)
+
+            }
+        })
     }
 
     private fun updateAdapter(todoList: List<TodoResponse>) {
